@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Scene designWidth="960" designHeight="640"
+       positionX="0"
+       positionY="0" anchorPointX="0" anchorPointY="0"
+       sizeType="Percent" width="1" height="1">
+    <Layer anchorPointX="0" anchorPointY="0" sizeType="Percent" width="1" height="1">
+
+        <Sprite name="bgSprite" texture="textures/menubg.png" positionX="480" positionY="320" anchorPointX="0.5"
+                anchorPointY="0.5">
+        </Sprite>
+        <Component name="org.ccj.game.HeroLeague.SceneController"/>
+    </Layer>
+</Scene>
