@@ -1,21 +1,12 @@
 package org.ccj.game.HeroLeague;
 
-import org.ccj.Director;
-import org.ccj.Event;
-import org.ccj.Scheduler;
-import org.ccj.Touch;
-import org.ccj.base.Ref;
+import org.ccj.*;
 import org.ccj.d2.Sprite;
-import org.ccj.d2.SpriteFrameCache;
 import org.ccj.d2.action.ScaleTo;
 import org.ccj.d2.action.Sequence;
-import org.ccj.editor.cce.Action;
-import org.ccj.editor.cce.Bind;
 import org.ccj.editor.cce.NodeController;
 import org.ccj.editor.cce.NodeReader;
 import org.ccj.math.Vec2;
-
-import java.util.Vector;
 
 /**
  */
@@ -27,33 +18,33 @@ public class SceneController extends NodeController {
     public static final int HEIGHT = 6;
     public static final int WIDTH = 10;
     public static final int BANNER_SIZE = 6;
-    public static final int CHECK_SIZE_H = 80;
-    public static final int CHECK_SIZE_V = 80;
+
+    int bannerStartX = 320;
+    int bannerStartY = GlobalDefine.DESIGN_HEIGHT - 50;
+
+    public static final float SELECT_SPLIT_TIME = 0.2f;     // 点击操作间隔时间
 
     CheckList checks = new CheckList();                      // 寻找的方格
     CheckList checksBanner = new CheckList();                // 第一行方格
+    float timeBase = 0f;                                        //时钟基准
+    float timeLastSelect = 0f;                              // 上次选择时间
 
     boolean canSelect = true;                               // 每次select之后0.2秒才能再次select
 
     @Override
     public boolean onTouchBegan(Touch touch, Event event) {
 
+        //记录点击时间
+        timeLastSelect = timeBase;
+
+        //判断是否正确选择
         if (canSelect) {
             for(int i=0; i<checks.size(); i++) {
                 canSelect = false;
                 final Check check = checks.get(i);
-                if (check.getBoundingBox().containsPoint(touch.getLocation())) {
-                    check.runAction(Sequence.create(
-                            ScaleTo.create(0.2f, 1.2f),
-                            ScaleTo.create(0, 1)));
-                    owner.scheduleOnce(new Scheduler.SchedulerCallback() {
-                        @Override
-                        public void onUpdate(float delta) {
-                            super.onUpdate(delta);
-                            canSelect = true;
-                            checkMatch(check.id);
-                        }
-                    }, 0.2f);
+                if (check.sprite.getBoundingBox().containsPoint(touch.getLocation())) {
+                    check.flash();
+                    checkMatch(check);
                 }
             }
         }
@@ -61,18 +52,34 @@ public class SceneController extends NodeController {
         return super.onTouchBegan(touch, event);
     }
 
-    public void checkMatch(int id) {
+    public void checkMatch(Check check) {
+
         Check checkBanner = checksBanner.get(0);
-        if (id == checkBanner.id) {
-            for(int i=1; i<BANNER_SIZE; i++) {
+        Logger.log("select check id : " + check.id);
+        Logger.log("banner check id : " + checkBanner.id);
+
+        if (check.id == checkBanner.id) {
+            for(int i=1; i<checksBanner.size(); i++) {
                 Check checkPre = checksBanner.get(i-1);
                 Check checkSuf = checksBanner.get(i);
-                checkSuf.moveTo(checkPre.getPosition());
+                checkSuf.moveTo(checkPre.sprite.getPosition());
             }
-        }
-aaaa
-        checksBanner.remove(0);
+            owner.removeChild(checkBanner.sprite);
+            checksBanner.remove(0);
 
+            // 更换check的精灵
+            int nNewCheckId = rand(Check.CHECK_TOTAL_COUNT);
+            Vec2 posOld = check.sprite.getPosition();
+            Vec2 position = new Vec2(posOld.getX(), posOld.getY());         //注意:Vec2.x,Vec2.y这种访问方式有问题，必须用get方法
+            check.changeId(owner, position, nNewCheckId);
+
+            // 新建bannercheck
+            int randIndex = rand(checks.size()-1);
+            Check checkTemp = checks.elementAt(randIndex);
+            Check checkBannerNew = new Check(owner, new Vec2(bannerStartX, bannerStartY), check.id);
+            checkBannerNew.moveTo(new Vec2(Check.CHECK_SIZE_H + bannerStartX, bannerStartY));
+            checksBanner.add(checkBanner);
+        }
     }
 
     @Override
@@ -81,36 +88,47 @@ aaaa
         setTouchEnabled(true);
         setTouchMode(Touch.MODE_ONE_BY_ONE);
 
-        initCheckCache();
         initChecks();
         initChecksBanner();
+        initState();
+    }
+
+    private void initState() {
+        timeBase = 0f;
+        timeLastSelect = 0f;
+        owner.schedule(new Scheduler.SchedulerCallback() {
+            @Override
+            public void onUpdate(float delta) {
+                super.onUpdate(delta);
+
+                // 基准时钟矫正
+                timeBase += delta;
+
+                //判断是否能进行选择
+                if (timeBase-timeLastSelect>SELECT_SPLIT_TIME) {
+                    canSelect = true;
+                }
+            }
+        });
     }
 
     private void initChecksBanner() {
         checksBanner.removeAllElements();
 
-        int bannerStartX = 0;
-        int bannerStartY = (int) Director.getInstance().getWinSize().height-50;
         for (int i=0; i< BANNER_SIZE; i++) {
-            int randIndex = rand(WIDTH * HEIGHT);
+            int randIndex = rand(checks.size()-1);
             Check check = checks.elementAt(randIndex);
-            int id = check.id;
-            String fileName = randIndex + "-40.png";
-            Check checkBanner = (Check) getSpriteFromFaceCache(fileName);
-            checkBanner.id = id;
-            checkBanner.setScale(1.8f);
-            checkBanner.setPosition(new Vec2(bannerStartX, bannerStartY));
-            checkBanner.moveTo(new Vec2((i+1)*CHECK_SIZE_H+bannerStartX, bannerStartY));
+            Check checkBanner = new Check(owner, new Vec2(bannerStartX, bannerStartY), check.id);
+            checkBanner.moveTo(new Vec2((BANNER_SIZE-i)*Check.CHECK_SIZE_H+bannerStartX, bannerStartY));
             checksBanner.add(checkBanner);
-            owner.addChild(checkBanner);
         }
 
         String showName = "quan_1.png";
-        String showActionName = "show.cce";
-        Sprite showSprite = getSpriteFromFaceCache(showName);
-        showSprite.setPosition(new Vec2((BANNER_SIZE)*CHECK_SIZE_H, bannerStartY));
+        String showActionName = "animates/show.cce";
+        Sprite showSprite = ResourceMng.getInstance().getSpriteFromCache(showName);
+        showSprite.setPosition(new Vec2(bannerStartX+(BANNER_SIZE)*Check.CHECK_SIZE_H, bannerStartY));
         showSprite.setZOrder(100);
-        showSprite.setScale(0.6f);
+        showSprite.setScale(1f);
         showSprite.runAction(NodeReader.create().readAnimation(showActionName));
         owner.addChild(showSprite);
     }
@@ -119,30 +137,16 @@ aaaa
         checks.removeAllElements();
         for (int x=0; x<WIDTH; x++) {
             for (int y=0; y<HEIGHT; y++) {
-                int randId = rand(255);
-                String fileName = randId + "-40.png";
-                Check check = (Check)getSpriteFromFaceCache(fileName);
-                check.id = randId;
-                check.setScale(1.8f);
-                check.setPosition(new Vec2((x+1)*CHECK_SIZE_H, (y+1)*CHECK_SIZE_V));
+                int randId = rand(Check.CHECK_TOTAL_COUNT);
+                Check check = new Check(owner, new Vec2((x+1)*Check.CHECK_SIZE_H, (y+1)*Check.CHECK_SIZE_V), randId);
                 checks.add(check);
-                owner.addChild(check);
             }
         }
     }
 
-    public void initCheckCache() {
-        SpriteFrameCache.getInstance().addSpriteFramesWithFile("textures/main.plist");
-    }
-
-    public Sprite getSpriteFromFaceCache(String name) {
-        Sprite sprite = Sprite.createWithSpriteFrame(SpriteFrameCache.getInstance().getSpriteFrameByName(name));
-        return sprite;
-    }
-
     public int rand(int max) {
         int temp = max-1;
-        long rand = Math.round(Math.random()*254) + 1;
+        long rand = Math.round(Math.random()*temp) + 1;
         int nRand = (int)rand;
         return nRand;
     }

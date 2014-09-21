@@ -28,8 +28,8 @@ import org.ccj.editor.cce.NodeReader;
  */
 public class Main {
 
-    public static final int DESIGN_WIDTH = 960;
-    public static final int DESIGN_HEIGHT = 640;
+    public static final int DESIGN_WIDTH = GlobalDefine.DESIGN_WIDTH;
+    public static final int DESIGN_HEIGHT = GlobalDefine.DESIGN_HEIGHT;
 
     public static void mainScene() {
         String paths[] = {

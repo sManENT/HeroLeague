@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Animation name="animation" loop="-1" unitTime="0.3">
+    <KeyFrame texture="textures/main.plist/quan_1.png"/>
+    <KeyFrame texture="textures/main.plist/quan_2.png"/>
+    <KeyFrame texture="textures/main.plist/quan_3.png"/>
+    <KeyFrame texture="textures/main.plist/quan_4.png"/>
+</Animation>
