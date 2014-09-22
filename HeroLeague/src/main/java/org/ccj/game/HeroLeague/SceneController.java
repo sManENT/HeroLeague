@@ -2,8 +2,6 @@ package org.ccj.game.HeroLeague;
 
 import org.ccj.*;
 import org.ccj.d2.Sprite;
-import org.ccj.d2.action.ScaleTo;
-import org.ccj.d2.action.Sequence;
 import org.ccj.editor.cce.NodeController;
 import org.ccj.editor.cce.NodeReader;
 import org.ccj.math.Vec2;
@@ -11,8 +9,6 @@ import org.ccj.math.Vec2;
 /**
  */
 public class SceneController extends NodeController {
-
-
 
     // 成员变量
     public static final int HEIGHT = 6;
@@ -23,19 +19,23 @@ public class SceneController extends NodeController {
     int bannerStartY = GlobalDefine.DESIGN_HEIGHT - 50;
 
     public static final float SELECT_SPLIT_TIME = 0.2f;     // 点击操作间隔时间
+    public static final float SUCESS_LAST_TIME = 2.0f;      // 成功保持时间
+    public static final float SUCESS_LIMIT_TIME = 5.0f;     // 成功时限，超过则认为失败
 
-    CheckList checks = new CheckList();                      // 寻找的方格
-    CheckList checksBanner = new CheckList();                // 第一行方格
-    float timeBase = 0f;                                        //时钟基准
-    float timeLastSelect = 0f;                              // 上次选择时间
+    CheckList checks = new CheckList();                         // 寻找的方格
+    CheckList checksBanner = new CheckList();                   // 第一行方格
+    float timeReal = 0f;                                        // 时钟基准，每一帧都会刷新改时间
+    float timeLastSelect = 0f;                                 // 上次选择时间
+    float timeLastSuccess = 0f;                                 // 上次成功选择时间
+    int lastSuccessCount = 0;                                   // 上次连续选中个数
 
-    boolean canSelect = true;                               // 每次select之后0.2秒才能再次select
+    boolean canSelect = true;                                  // 每次select之后0.2秒才能再次select
 
     @Override
     public boolean onTouchBegan(Touch touch, Event event) {
 
         //记录点击时间
-        timeLastSelect = timeBase;
+        timeLastSelect = timeReal;
 
         //判断是否正确选择
         if (canSelect) {
@@ -53,19 +53,15 @@ public class SceneController extends NodeController {
     }
 
     public void checkMatch(Check check) {
+        if (checksBanner.size() < 1) {
+            return;
+        }
 
         Check checkBanner = checksBanner.get(0);
         Logger.log("select check id : " + check.id);
         Logger.log("banner check id : " + checkBanner.id);
 
         if (check.id == checkBanner.id) {
-            for(int i=1; i<checksBanner.size(); i++) {
-                Check checkPre = checksBanner.get(i-1);
-                Check checkSuf = checksBanner.get(i);
-                checkSuf.moveTo(checkPre.sprite.getPosition());
-            }
-            owner.removeChild(checkBanner.sprite);
-            checksBanner.remove(0);
 
             // 更换check的精灵
             int nNewCheckId = rand(Check.CHECK_TOTAL_COUNT);
@@ -73,13 +69,69 @@ public class SceneController extends NodeController {
             Vec2 position = new Vec2(posOld.getX(), posOld.getY());         //注意:Vec2.x,Vec2.y这种访问方式有问题，必须用get方法
             check.changeId(owner, position, nNewCheckId);
 
-            // 新建bannercheck
-            int randIndex = rand(checks.size()-1);
-            Check checkTemp = checks.elementAt(randIndex);
-            Check checkBannerNew = new Check(owner, new Vec2(bannerStartX, bannerStartY), check.id);
-            checkBannerNew.moveTo(new Vec2(Check.CHECK_SIZE_H + bannerStartX, bannerStartY));
-            checksBanner.add(checkBanner);
+            // 更换bannercheck
+            for(int i=1; i<checksBanner.size(); i++) {
+                Check checkPre = checksBanner.get(i-1);
+                Check checkSuf = checksBanner.get(i);
+                checkSuf.moveTo(checkPre.sprite.getPosition());
+            }
+            Check checkBannerFirst = checksBanner.get(0);
+            Check checkBannerLast = checksBanner.get(checksBanner.size()-1);
+            int nRandIndex = rand(checks.size()-1);
+            Check checkForBannerNew = checks.get(nRandIndex);
+            checkBannerFirst.changeId(owner, checkBannerLast.sprite.getPosition(), checkForBannerNew.id);
+
+            // 成功时的数学逻辑
+            successLogic();
         }
+    }
+
+    public void successLogic() {
+        // 在连击时间范围内
+        if (timeReal -timeLastSuccess<SUCESS_LAST_TIME) {
+            lastSuccessCount++;
+
+            if (2 == lastSuccessCount) {
+                Statistics.getInstance().doubleSuccessCount++;
+            } else if (3 == lastSuccessCount) {
+                Statistics.getInstance().threeSuccessCount++;
+            } else if (4 == lastSuccessCount) {
+                Statistics.getInstance().fourSuccessCount++;
+            } else if (5 == lastSuccessCount) {
+                Statistics.getInstance().fiveSuccessCount++;
+            }
+
+            if (Statistics.getInstance().maxLastSuccessCount < lastSuccessCount) {
+                Statistics.getInstance().maxLastSuccessCount = lastSuccessCount;
+            }
+        } else {
+            lastSuccessCount = 0;
+        }
+
+        Statistics.getInstance().successCount++;
+        timeLastSuccess = timeReal;
+    }
+
+    public void failure() {
+        if (checksBanner.size() < 1) {
+            return;
+        }
+
+        Logger.log("time out, failure!");
+
+        Statistics.getInstance().failureCount++;
+
+        // 更换bannercheck
+        for(int i=1; i<checksBanner.size(); i++) {
+            Check checkPre = checksBanner.get(i-1);
+            Check checkSuf = checksBanner.get(i);
+            checkSuf.moveTo(checkPre.sprite.getPosition());
+        }
+        Check checkBannerFirst = checksBanner.get(0);
+        Check checkBannerLast = checksBanner.get(checksBanner.size()-1);
+        int nRandIndex = rand(checks.size()-1);
+        Check checkForBannerNew = checks.get(nRandIndex);
+        checkBannerFirst.changeId(owner, checkBannerLast.sprite.getPosition(), checkForBannerNew.id);
     }
 
     @Override
@@ -94,7 +146,10 @@ public class SceneController extends NodeController {
     }
 
     private void initState() {
-        timeBase = 0f;
+
+        Statistics.getInstance().resetData();
+
+        timeReal = 0f;
         timeLastSelect = 0f;
         owner.schedule(new Scheduler.SchedulerCallback() {
             @Override
@@ -102,11 +157,17 @@ public class SceneController extends NodeController {
                 super.onUpdate(delta);
 
                 // 基准时钟矫正
-                timeBase += delta;
+                timeReal += delta;
 
-                //判断是否能进行选择
-                if (timeBase-timeLastSelect>SELECT_SPLIT_TIME) {
+                // 判断是否能进行选择
+                if (timeReal -timeLastSelect>SELECT_SPLIT_TIME) {
                     canSelect = true;
+                }
+
+                // 判断是否失败
+                if (timeReal -timeLastSuccess>SUCESS_LIMIT_TIME) {
+                    failure();
+                    timeLastSuccess = timeReal;
                 }
             }
         });
