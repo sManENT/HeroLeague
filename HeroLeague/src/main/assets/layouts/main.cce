@@ -6,9 +6,9 @@
        sizeType="Percent" width="1" height="1">
     <Layer anchorPointX="0" anchorPointY="0" sizeType="Percent" width="1" height="1">
 
-        <Sprite name="bgSprite" texture="textures/menubg.png" positionX="480" positionY="320" anchorPointX="0.5"
+        <Sprite name="bgSprite" texture="textures/mainbg.png" positionX="480" positionY="320" anchorPointX="0.5"
                 anchorPointY="0.5">
         </Sprite>
-        <Component name="org.ccj.game.HeroLeague.SceneController"/>
+        <Component name="org.ccj.game.HeroLeague.MainController"/>
     </Layer>
 </Scene>

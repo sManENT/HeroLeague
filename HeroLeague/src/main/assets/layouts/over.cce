@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Scene designWidth="960" designHeight="640"
+       positionX="0"
+       positionY="0" anchorPointX="0" anchorPointY="0"
+       sizeType="Percent" width="1" height="1">
+    <Layer anchorPointX="0" anchorPointY="0" sizeType="Percent" width="1" height="1">
+
+        <Sprite name="bgSprite" texture="textures/overbg.png" positionX="480" positionY="320" anchorPointX="0.5"
+                anchorPointY="0.5">
+            <Label name="scoreLabel" text="0" anchorPointX="0.5" anchorPointY="0.5" positionX="480" positionY="280" fontSize="40"/>
+            <Label name="doubleLabel" text="0" anchorPointX="0.5" anchorPointY="0.5" positionX="480" positionY="230" fontSize="40"/>
+            <Label name="threeLabel" text="0" anchorPointX="0.5" anchorPointY="0.5" positionX="480" positionY="180" fontSize="40"/>
+            <Label name="fourLabel" text="0" anchorPointX="0.5" anchorPointY="0.5" positionX="480" positionY="130" fontSize="40"/>
+            <Label name="fiveLabel" text="0" anchorPointX="0.5" anchorPointY="0.5" positionX="480" positionY="80" fontSize="40"/>
+        </Sprite>
+        <Component name="org.ccj.game.HeroLeague.OverController"/>
+    </Layer>
+</Scene>

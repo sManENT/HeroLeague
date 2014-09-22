@@ -46,8 +46,8 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int w = DESIGN_WIDTH/2;
-        int h = DESIGN_HEIGHT/2;
+        int w = DESIGN_WIDTH;
+        int h = DESIGN_HEIGHT;
 
         if (args != null && args.length >= 2) {
             w = Integer.parseInt(args[0]);

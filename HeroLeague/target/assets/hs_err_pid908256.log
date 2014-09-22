@@ -63,8 +63,8 @@ C  [cocosjava.dll+0x723133]
 C  [cocosjava.dll+0x581783]
 j  org.ccj.d2.Node.runAction(Lorg/ccj/d2/action/Action;)Lorg/ccj/d2/action/Action;+0
 j  org.ccj.game.HeroLeague.Check.moveTo(Lorg/ccj/math/Vec2;)V+10
-j  org.ccj.game.HeroLeague.SceneController.checkMatch(Lorg/ccj/game/HeroLeague/Check;)V+284
-j  org.ccj.game.HeroLeague.SceneController.onTouchBegan(Lorg/ccj/Touch;Lorg/ccj/Event;)Z+72
+j  org.ccj.game.HeroLeague.MainController.checkMatch(Lorg/ccj/game/HeroLeague/Check;)V+284
+j  org.ccj.game.HeroLeague.MainController.onTouchBegan(Lorg/ccj/Touch;Lorg/ccj/Event;)Z+72
 j  org.ccj.Engine.handleTouchEvent(JLorg/ccj/Touch;Lorg/ccj/TouchEvent;)I+36
 v  ~StubRoutines::call_stub
 V  [jvm.dll+0x142285]
@@ -138,8 +138,8 @@ C  [ntdll.dll+0x39f45]
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
 j  org.ccj.d2.Node.runAction(Lorg/ccj/d2/action/Action;)Lorg/ccj/d2/action/Action;+0
 j  org.ccj.game.HeroLeague.Check.moveTo(Lorg/ccj/math/Vec2;)V+10
-j  org.ccj.game.HeroLeague.SceneController.checkMatch(Lorg/ccj/game/HeroLeague/Check;)V+284
-j  org.ccj.game.HeroLeague.SceneController.onTouchBegan(Lorg/ccj/Touch;Lorg/ccj/Event;)Z+72
+j  org.ccj.game.HeroLeague.MainController.checkMatch(Lorg/ccj/game/HeroLeague/Check;)V+284
+j  org.ccj.game.HeroLeague.MainController.onTouchBegan(Lorg/ccj/Touch;Lorg/ccj/Event;)Z+72
 j  org.ccj.Engine.handleTouchEvent(JLorg/ccj/Touch;Lorg/ccj/TouchEvent;)I+36
 v  ~StubRoutines::call_stub
 j  org.ccj.Application.run()I+0
@@ -325,8 +325,8 @@ Launcher Type: SUN_STANDARD
 Environment Variables:
 JAVA_HOME=E:\KID\Java
 CLASSPATH=.;E:\KID\Java\lib\dt.jar;E:\KID\Java\lib\tools.jar;E:\Python27;E:\Python27\Scripts;
-PATH=.;C:\Windows\System32;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET Web Pages\v1.0\;C:\Program Files (x86)\Microsoft SQL Server\90\Tools\binn\;C:\Program Files (x86)\Common Files\Adobe\AGL;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Common Files\Autodesk Shared\;C:\Program Files (x86)\Autodesk\Backburner\;C:\Windows;C:\Windows\system32\wbem;D:\cocos2d-x-3.0\tools\cocos2d-console\bin;.;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           õ  ð‘ú   pðú     4     ð‘úø;  ÿ    ÷ §    § ˜[ Ð  äÐŒ6w   ð‘ú            ð‘ú    Û	 Ò q  ¡ú § ð€ÿ ;         ð‘úÜÑÎ86w8 ª86wÇÛ~       ø‘úð€ÿÐ™ 0¤ÿ°œ     ÿ      Ø0à §    ˜[       ø‘úø‘úó‘ú    \Cw`Cw      ø‘ú„ÑÄ7wø‘ú( H    ý~  ÀÒÔÑ  ý~Ò           0¤ÿ Ò     q Ð      ¤ Ò¸ ÿ üÐàÑ,Øõq:wkáþÿÿÿª86w¢46w    ø‘ú ’ÙfÕ    ð‘ú<Ò¿
-¦v       ø‘úÐ       ØîÑf¤Ð ’Ùf        H ø‘ú¤  TÒE
+PATH=.;C:\Windows\System32;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET Web Pages\v1.0\;C:\Program Files (x86)\Microsoft SQL Server\90\Tools\binn\;C:\Program Files (x86)\Common Files\Adobe\AGL;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Common Files\Autodesk Shared\;C:\Program Files (x86)\Autodesk\Backburner\;C:\Windows;C:\Windows\system32\wbem;D:\cocos2d-x-3.0\tools\cocos2d-console\bin;.;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ï¿½  ï¿½ï¿½   pï¿½ï¿½    ï¿½4     ï¿½ï¿½ï¿½;  ï¿½    ï¿½ ï¿½    ï¿½ ï¿½[ ï¿½  ï¿½ï¿½ï¿½6w   ï¿½ï¿½            ï¿½ï¿½    ï¿½	 ï¿½ q ï¿½ï¿½ï¿½ ï¿½ ï¿½ï¿½ï¿½ ;         ï¿½ï¿½ï¿½ï¿½ï¿½86w8 ï¿½86wï¿½ï¿½~       ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð™ 0ï¿½ï¿½ï¿½ï¿½     ï¿½      ï¿½0ï¿½ ï¿½    ï¿½[       ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    \Cw`Cw      ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½7wï¿½ï¿½ï¿½( H   ï¿½ï¿½~  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½~ï¿½           0ï¿½ï¿½ ï¿½     q ï¿½      ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½q:wkï¿½ï¿½ï¿½ï¿½ï¿½ï¿½86wï¿½46w    ï¿½ï¿½ï¿½ ï¿½ï¿½fï¿½    ï¿½ï¿½<ï¿½ï¿½
+ï¿½v       ï¿½ï¿½ï¿½ï¿½       ï¿½ï¿½ï¿½fï¿½ï¿½ ï¿½ï¿½f        Hï¿½ï¿½ï¿½ï¿½ï¿½  Tï¿½E
 USERNAME=Allen
 OS=Windows_NT
 PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 37 Stepping 2, GenuineIntel
